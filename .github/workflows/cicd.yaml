@@ -1,0 +1,40 @@
+# cicd.yaml
+
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker Image
+        run: docker build -t security-hardened-app:${{ github.sha }} .
+
+      - name: Container Security Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: security-hardened-app:${{ github.sha }}
+
+      - name: Lint and Validate YAML Files
+        run: |
+          docker run -v $(pwd):/workspace ghcr.io/yannh/kubeconform:v0.4.12 -summary -strict manifests/
+
+      - name: Deploy to Kubernetes
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        run: |
+          kubectl apply -f manifests/base/
