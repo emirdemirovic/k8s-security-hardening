@@ -1,0 +1,9 @@
+# namespace.yaml
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: security-hardened-app
+  labels:
+    pod-security.kubernetes.io/enforce: "baseline"
+    pod-security.kubernetes.io/enforce-version: "latest"

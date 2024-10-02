@@ -1,0 +1,32 @@
+# network-policy.yaml
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-all
+  namespace: security-hardened-app
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-web
+  namespace: security-hardened-app
+spec:
+  podSelector:
+    matchLabels:
+      app: security-hardened-app
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: secure-ingress
+    ports:
+    - protocol: TCP
+      port: 8080
