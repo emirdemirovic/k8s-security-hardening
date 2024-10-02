@@ -1,11 +1,10 @@
-# cicd.yaml
+# ci.yaml
 
 name: CI/CD Pipeline
 on:
   push:
     branches:
       - main
-      - cicd
   pull_request:
     branches:
       - main
